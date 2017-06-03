@@ -2,10 +2,11 @@ import shutil
 import os
 import errno
 import bz2
+from config import *
 
 
-INPUT_FERET = "D:/colorferet/colorferet"
-OUTPUT_FERET = "D:/colorferet"
+INPUT_FERET = BASE_DIR + "colorferet/colorferet"
+OUTPUT_FERET = BASE_DIR+ "colorferet"
 DVDS = ["dvd1", "dvd2"]
 DATA = "data"
 GROUND_TRUTHS = "ground_truths"
