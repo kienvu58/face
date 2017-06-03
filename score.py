@@ -92,7 +92,7 @@ def main(args):
     if args["output"] is not None:
         output = args["output"]
     else:
-        output_file_name = module_name.replace(".", "_") + ".dat"
+        output_file_name = "aligned" + module_name.replace(".", "_") + ".dat"
         output = os.path.join("scores", output_file_name)
 
     target = load(TARGET_SET)
