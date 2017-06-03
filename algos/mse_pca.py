@@ -8,7 +8,7 @@ from sklearn.decomposition import PCA
 class MSEPCA():
     def __init__(self, params=None):
         print("Init PCA")
-        images = load("dat/target_images.dat")
+        images = load("dat/aligned_target_images.dat")
         n_images, h, w = images.shape
         x_train = images.reshape((n_images, -1))
         n_components = 150
