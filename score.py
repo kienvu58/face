@@ -35,11 +35,15 @@ def get_face_info(subject, img_file_name):
     ground_truth_path = os.path.join(GROUND_TRUTH, subject, ground_truth_fn)
     tree = ET.parse(ground_truth_path)
     root = tree.getroot()
-    face_info = root[0][4][0][0]
-    left_eye = face_info[4]
-    right_eye = face_info[5]
-    # nose = face_info[6]
-    mouth = face_info[7]
+    try:
+        face_info = root[0][4][0][0]
+        left_eye = face_info[4]
+        right_eye = face_info[5]
+        # nose = face_info[6]
+        mouth = face_info[7]
+    except Exception:
+        print(subject, img_file_name)
+        return None
 
     left_eye_coords = get_coordinates(left_eye.attrib)
     right_eye_coords = get_coordinates(right_eye.attrib)
@@ -51,8 +55,11 @@ def align_feret(img, subject, img_file_name):
     h, w = img.shape[:2]
     face_info = get_face_info(subject, img_file_name)
     scale_factor = calc_scale_factor(h, w)
-    affine_transform = get_affine_transform(scale_factor, *face_info)
-    aligned_img = cv2.warpAffine(img, affine_transform, (w, h))
+    if face_info is not None:
+        affine_transform = get_affine_transform(scale_factor, *face_info)
+        aligned_img = cv2.warpAffine(img, affine_transform, (w, h))
+    else:
+        aligned_img = img
     # cv2.imshow("original", img)
     # cv2.imshow("affine", aligned_img)
     # cv2.waitKey(0)
