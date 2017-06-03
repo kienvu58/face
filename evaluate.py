@@ -175,12 +175,14 @@ def evaluate_from_file(scores_file_name):
 
 
 def main(args):
-    output_eval = args["output-eval"]
-    output_score = args["output-score"]
+    output_eval = args["output_eval"]
+    output_score = args["output_score"]
     if args["algo"]:
         module_name = args["input"]
         score_args = {"module": module_name,
-                      "params": args["params"], "output": output_score}
+                      "params": args["params"],
+                      "output": output_score,
+                      "align": args["align"]}
         scores_file_name = score.main(score_args)
     else:
         scores_file_name = args["input"]
@@ -204,4 +206,6 @@ if __name__ == '__main__':
                         help="Scores output file")
     parser.add_argument("-p", "--params", type=str,
                         help="Optional params string to run with algorithm")
+    parser.add_argument("-al", "--align", dest="align", action="store_true",
+                        help="Score aligned images")
     main(vars(parser.parse_args()))
