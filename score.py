@@ -1,15 +1,22 @@
+from __future__ import print_function
 import argparse
 import os
-import importlib.util
 import numpy as np
 from config import *
 from utils import *
 import cv2
 import xml.etree.ElementTree as ET
+import sys
+
+
+if (sys.version_info > (3, 0)):
+    import importlib.util
+else:
+    import importlib
 
 
 def get_affine_transform(scale_factor, left_eye, right_eye, mouth):
-    original = np.float32([left_eye, right_eye, mouth]) 
+    original = np.float32([left_eye, right_eye, mouth])
     landmarks = LANDMARKS
     original = np.multiply(original, scale_factor)
     landmarks = np.multiply(landmarks, scale_factor)
@@ -68,11 +75,11 @@ def align_feret(img, subject, img_file_name):
 
 def calc_scores(algo, target, query, align=False):
     scores = np.empty((len(query), len(target)))
-    count_down = scores.size
+    # count_down = scores.size
     for q_ids, q in enumerate(query):
         q_img_path = os.path.join(FERET_DIR, *q)
         for t_ids, t in enumerate(target):
-            print(count_down)
+            # print(count_down)
             t_img_path = os.path.join(FERET_DIR, *t)
             target_img = cv2.imread(t_img_path, cv2.IMREAD_GRAYSCALE)
             query_img = cv2.imread(q_img_path, cv2.IMREAD_GRAYSCALE)
@@ -82,7 +89,7 @@ def calc_scores(algo, target, query, align=False):
                 query_img = align_feret(query_img, *q)
 
             scores[q_ids][t_ids] = algo.calc_sim(target_img, query_img)
-            count_down -= 1
+            # count_down -= 1
     return scores
 
 

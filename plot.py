@@ -25,13 +25,22 @@ def plot_from_dict(plot_dict, title, xlabel, ylabel, xticks=None, save=False):
         plt.savefig(save_path)
 
 
-def load_result(path_list):
+def load_result(path_list, folder):
     result = {}
-    for path in path_list:
-        basename = os.path.basename(path)
-        name, ext = os.path.splitext(basename)
-        evaluation = load(path)
-        result[name] = evaluation
+    if not folder:
+        for path in path_list:
+            basename = os.path.basename(path)
+            name, ext = os.path.splitext(basename)
+            evaluation = load(path)
+            result[name] = evaluation
+    else:
+        for fn in os.listdir(path_list[0]):
+            if not fn.endswith(".dat"):
+                continue
+            basename = os.path.basename(fn)
+            name, ext = os.path.splitext(basename)
+            evaluation = load(os.path.join(path_list[0], fn))
+            result[name] = evaluation
 
     return result
 
@@ -111,7 +120,7 @@ def plot_roc(roc, save=False):
 
 def main(args):
     save = args["save"]
-    result = load_result(args["list"])
+    result = load_result(args["list"], folder=args["folder"])
     cmc, roc = split_result(result)
     plot_cmc(cmc, save=save)
     plot_roc(roc, save=save)
@@ -125,6 +134,8 @@ if __name__ == "__main__":
                         help="List of evaluations to plot.")
     parser.add_argument("-s", "--save", dest="save", action="store_true",
                         help="Save figures to file.")
+    parser.add_argument("-f", "--folder", dest="folder", action="store_true",
+                        help="Plot all files in folder")
     main(vars(parser.parse_args()))
     # plot_dict = {
     #     "A": ([0, 1, 2, 3, 4], [0, 1, 4, 9, 16]),

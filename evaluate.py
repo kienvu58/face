@@ -4,6 +4,7 @@ scores: ndarray mxn
     col_idx: target image index
     value: score
 """
+from __future__ import print_function
 import numpy as np
 import argparse
 from config import *

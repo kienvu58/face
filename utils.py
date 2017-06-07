@@ -1,5 +1,10 @@
-import pickle
+import sys
 import os
+
+if (sys.version_info > (3, 0)):
+    import pickle
+else:
+    import cPickle as pickle
 
 
 def dump(filename, data, protocol=3):
