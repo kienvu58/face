@@ -1,7 +1,10 @@
 import numpy as np
+import platform
 
-
-BASE_DIR = "D:/"
+if platform.system() == "Windows":
+    BASE_DIR = "D:/"
+else:
+    BASE_DIR = "/data/kienvt/"
 FERET_DIR = BASE_DIR + "colorferet/data/thumbnails/"
 GROUND_TRUTH = BASE_DIR + "colorferet/data/ground_truths/xml/"
 

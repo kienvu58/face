@@ -18,5 +18,8 @@ def dump(filename, data, protocol=2):
 
 def load(filename):
     with open(filename, "rb") as f:
-        data = pickle.load(f, encoding="latin1")
+        if (sys.version_info > (3, 0)):
+            data = pickle.load(f, encoding="latin1")
+        else:
+            data = pickle.load(f)
     return data

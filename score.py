@@ -88,7 +88,8 @@ def calc_scores(algo, target, query, align=False):
                 target_img = align_feret(target_img, *t)
                 query_img = align_feret(query_img, *q)
 
-            scores[q_ids][t_ids] = algo.calc_sim(target_img, query_img)
+            score = algo.calc_sim(target_img, query_img)
+            scores[q_ids][t_ids] = score
             # count_down -= 1
     return scores
 
