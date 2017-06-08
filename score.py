@@ -88,7 +88,13 @@ def calc_scores(algo, target, query, align=False):
                 target_img = align_feret(target_img, *t)
                 query_img = align_feret(query_img, *q)
 
-            score = algo.calc_sim(target_img, query_img)
+            try:
+                score = algo.calc_sim(target_img, query_img)
+            except Exception as e:
+                print(e)
+                print(t_img_path, q_img_path)
+                score = 1000
+
             scores[q_ids][t_ids] = score
             # count_down -= 1
     return scores

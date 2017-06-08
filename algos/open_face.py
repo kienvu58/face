@@ -21,9 +21,16 @@ class OpenFace():
 
     def get_rep(self, img):
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+
         bb = self.align.getLargestFaceBoundingBox(img)
+        if bb is None:
+            raise Exception("Unable to find a face!")
+
         aligned_face = self.align.align(self.img_dim, img, bb,
                 landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
+        if aligned_face is None:
+            raise Exception("Unable to align image!")
+
         rep = self.net.forward(aligned_face)
         return rep
     
