@@ -18,5 +18,5 @@ def dump(filename, data, protocol=2):
 
 def load(filename):
     with open(filename, "rb") as f:
-        data = pickle.load(f)
+        data = pickle.load(f, encoding="latin1")
     return data

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-BASE_DIR = "/data/kienvt/"
+BASE_DIR = "D:/"
 FERET_DIR = BASE_DIR + "colorferet/data/thumbnails/"
 GROUND_TRUTH = BASE_DIR + "colorferet/data/ground_truths/xml/"
 

@@ -49,7 +49,7 @@ def get_face_info(subject, img_file_name):
         # nose = face_info[6]
         mouth = face_info[7]
     except Exception:
-        print(subject, img_file_name)
+        # print(subject, img_file_name)
         return None
 
     left_eye_coords = get_coordinates(left_eye.attrib)
