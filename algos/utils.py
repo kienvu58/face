@@ -7,7 +7,7 @@ else:
     import cPickle as pickle
 
 
-def dump(filename, data, protocol=3):
+def dump(filename, data, protocol=2):
     dir = os.path.split(filename)[0]
     if not os.path.isdir(dir):
         os.makedirs(dir)
