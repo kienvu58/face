@@ -7,6 +7,7 @@ from utils import *
 import cv2
 import xml.etree.ElementTree as ET
 import sys
+from multiprocessing import Pool
 
 
 if (sys.version_info > (3, 0)):
@@ -73,30 +74,39 @@ def align_feret(img, subject, img_file_name):
     return aligned_img
 
 
+def multi_args(args):
+    calc_scores_worker(*args)
+
+
+def calc_scores_worker(algo, q_id, scores, target, query, align):
+    q = query[q_id]
+    q_img_path = os.path.join(FERET_DIR, *q)
+    for t_id, t in enumerate(target):
+        t_img_path = os.path.join(FERET_DIR, *t)
+        target_img = cv2.imread(t_img_path, cv2.IMREAD_GRAYSCALE)
+        query_img = cv2.imread(q_img_path, cv2.IMREAD_GRAYSCALE)
+
+        if align:
+            target_img = align_feret(target_img, *t)
+            query_img = align_feret(query_img, *q)
+
+        try:
+            score = algo.calc_sim(target_img, query_img)
+        except Exception as e:
+            print(e)
+            print(t_img_path, q_img_path)
+            score = 1000
+
+        scores[q_id][t_id] = score
+
+
 def calc_scores(algo, target, query, align=False):
     scores = np.empty((len(query), len(target)))
-    # count_down = scores.size
-    for q_ids, q in enumerate(query):
-        q_img_path = os.path.join(FERET_DIR, *q)
-        for t_ids, t in enumerate(target):
-            # print(count_down)
-            t_img_path = os.path.join(FERET_DIR, *t)
-            target_img = cv2.imread(t_img_path, cv2.IMREAD_GRAYSCALE)
-            query_img = cv2.imread(q_img_path, cv2.IMREAD_GRAYSCALE)
-
-            if align:
-                target_img = align_feret(target_img, *t)
-                query_img = align_feret(query_img, *q)
-
-            try:
-                score = algo.calc_sim(target_img, query_img)
-            except Exception as e:
-                print(e)
-                print(t_img_path, q_img_path)
-                score = 1000
-
-            scores[q_ids][t_ids] = score
-            # count_down -= 1
+    args = []
+    for q_id in range(len(query)):
+        args.append((algo, q_id, scores, target, query, align))
+    pool = Pool()
+    pool.map(multi_args, args)
     return scores
 
 
