@@ -39,7 +39,7 @@ class OpenFace():
             d = self.get_rep(img1) - self.get_rep(img2)
             ret = np.dot(d, d)
         except Exception as e:
-            print(e)
+            print("calc_sim", e)
             return 4.0
         return ret
 
