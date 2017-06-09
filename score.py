@@ -7,7 +7,7 @@ from utils import *
 import cv2
 import xml.etree.ElementTree as ET
 import sys
-from multiprocessing import Pool
+from multiprocessing import Pool, Array, Process
 
 
 if (sys.version_info > (3, 0)):
@@ -74,46 +74,49 @@ def align_feret(img, subject, img_file_name):
     return aligned_img
 
 
-class Score():
-    def __init__(self, algo, target, query, align=False):
-        self.algo = algo
-        self.target = target
-        self.query = query
-        self.align = align
-        self.scores = np.empty((len(query), len(target)))
+def multi_args(args):
+    calc_scores_worker(*args)
 
-    def calc_scores_worker(self, q_id):
-        q = self.query[q_id]
-        q_img_path = os.path.join(FERET_DIR, *q)
-        for t_id, t in enumerate(self.target):
-            t_img_path = os.path.join(FERET_DIR, *t)
-            target_img = cv2.imread(t_img_path, cv2.IMREAD_GRAYSCALE)
-            query_img = cv2.imread(q_img_path, cv2.IMREAD_GRAYSCALE)
 
-            if self.align:
-                target_img = align_feret(target_img, *t)
-                query_img = align_feret(query_img, *q)
+def calc_scores_worker(module_name, params, q_id, scores, target, query, align):
+    module = importlib.import_module(module_name)
+    algo = module.create(params)
+    q = query[q_id]
+    q_img_path = os.path.join(FERET_DIR, *q)
+    for t_id, t in enumerate(target):
+        t_img_path = os.path.join(FERET_DIR, *t)
+        target_img = cv2.imread(t_img_path, cv2.IMREAD_GRAYSCALE)
+        query_img = cv2.imread(q_img_path, cv2.IMREAD_GRAYSCALE)
 
-            score = self.algo.calc_sim(target_img, query_img)
+        if align:
+            target_img = align_feret(target_img, *t)
+            query_img = align_feret(query_img, *q)
 
-            self.scores[q_id][t_id] = score
+        score = algo.calc_sim(target_img, query_img)
 
-    def calc_scores(self):
-        args = list(range(len(self.query)))
-        pool = Pool()
-        pool.map(self.calc_scores_worker, args)
-        return self.scores
+        scores[q_id][t_id] = score
+
+
+def calc_scores(module_name, params, target, query, align=False):
+    scores = np.empty((len(query), len(target)))
+    args = []
+    for q_id in range(len(query)):
+        args.append((module_name, params, q_id, scores, target, query, align))
+    pool = Pool()
+    pool.map(multi_args, args)
+    return scores
 
 
 def main(args):
     module_name = args["module"]
     module = importlib.import_module(module_name)
+    params = args["params"]
 
     align = args["align"]
 
     if module is None:
         print("Cannot load module: {}".format(module_name))
-    algo = module.create(args["params"])
+        exit()
 
     if args["output"] is not None:
         output = args["output"]
@@ -124,8 +127,7 @@ def main(args):
     target = load(TARGET_SET)
     query = load(QUERY_SET)
 
-    calc = Score(algo, target, query, align)
-    scores = calc.calc_scores()
+    scores = calc_scores(module, params, target, query, align=align)
     dump(output, scores)
     return output
 
