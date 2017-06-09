@@ -44,6 +44,14 @@ class OpenFace():
         return ret
 
 
-def create(params):
+def create(params=None):
     algo = OpenFace(params)
     return algo
+
+if __name__ == "__main__":
+    algo = create()
+    img1 = cv2.imread("/data/kienvt/colorferet/data/thumbnails/00001/00001_930831_fa_a.ppm", cv2.IMREAD_GRAYSCALE)
+    img2 = cv2.imread("/data/kienvt/colorferet/data/thumbnails/00001/00001_930831_fb_a.ppm", cv2.IMREAD_GRAYSCALE)
+    ret = algo.calc_sim(img1, img2)
+    print(ret)
+

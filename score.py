@@ -127,7 +127,7 @@ def main(args):
     target = load(TARGET_SET)
     query = load(QUERY_SET)
 
-    scores = calc_scores(module, params, target, query, align=align)
+    scores = calc_scores(module_name, params, target, query, align=align)
     dump(output, scores)
     return output
 
