@@ -90,12 +90,7 @@ def calc_scores_worker(algo, q_id, scores, target, query, align):
             target_img = align_feret(target_img, *t)
             query_img = align_feret(query_img, *q)
 
-        try:
-            score = algo.calc_sim(target_img, query_img)
-        except Exception as e:
-            print(e)
-            print(t_img_path, q_img_path)
-            score = 1000
+        score = algo.calc_sim(target_img, query_img)
 
         scores[q_id][t_id] = score
 

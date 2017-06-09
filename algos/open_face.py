@@ -35,8 +35,12 @@ class OpenFace():
         return rep
     
     def calc_sim(self, img1, img2):
-        d = self.get_rep(img1) - self.get_rep(img2)
-        ret = np.dot(d, d)
+        try:
+            d = self.get_rep(img1) - self.get_rep(img2)
+            ret = np.dot(d, d)
+        except Exception as e:
+            print(e)
+            return 4.0
         return ret
 
 
