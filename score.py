@@ -74,35 +74,35 @@ def align_feret(img, subject, img_file_name):
     return aligned_img
 
 
-def multi_args(args):
-    calc_scores_worker(*args)
+class Score():
+    def __init__(self, algo, target, query, align=False):
+        self.algo = algo
+        self.target = target
+        self.query = query
+        self.align = align
+        self.scores = np.empty((len(query), len(target)))
 
+    def calc_scores_worker(self, q_id):
+        q = self.query[q_id]
+        q_img_path = os.path.join(FERET_DIR, *q)
+        for t_id, t in enumerate(self.target):
+            t_img_path = os.path.join(FERET_DIR, *t)
+            target_img = cv2.imread(t_img_path, cv2.IMREAD_GRAYSCALE)
+            query_img = cv2.imread(q_img_path, cv2.IMREAD_GRAYSCALE)
 
-def calc_scores_worker(algo, q_id, scores, target, query, align):
-    q = query[q_id]
-    q_img_path = os.path.join(FERET_DIR, *q)
-    for t_id, t in enumerate(target):
-        t_img_path = os.path.join(FERET_DIR, *t)
-        target_img = cv2.imread(t_img_path, cv2.IMREAD_GRAYSCALE)
-        query_img = cv2.imread(q_img_path, cv2.IMREAD_GRAYSCALE)
+            if self.align:
+                target_img = align_feret(target_img, *t)
+                query_img = align_feret(query_img, *q)
 
-        if align:
-            target_img = align_feret(target_img, *t)
-            query_img = align_feret(query_img, *q)
+            score = self.algo.calc_sim(target_img, query_img)
 
-        score = algo.calc_sim(target_img, query_img)
+            self.scores[q_id][t_id] = score
 
-        scores[q_id][t_id] = score
-
-
-def calc_scores(algo, target, query, align=False):
-    scores = np.empty((len(query), len(target)))
-    args = []
-    for q_id in range(len(query)):
-        args.append((algo, q_id, scores, target, query, align))
-    pool = Pool()
-    pool.map(multi_args, args)
-    return scores
+    def calc_scores(self):
+        args = list(range(len(self.query)))
+        pool = Pool()
+        pool.map(self.calc_scores_worker, args)
+        return self.scores
 
 
 def main(args):
@@ -124,7 +124,8 @@ def main(args):
     target = load(TARGET_SET)
     query = load(QUERY_SET)
 
-    scores = calc_scores(algo, target, query, align=align)
+    calc = Score(algo, target, query, align)
+    scores = calc.calc_scores()
     dump(output, scores)
     return output
 
