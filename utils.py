@@ -10,7 +10,8 @@ else:
 def dump(filename, data, protocol=2):
     dir = os.path.split(filename)[0]
     if not os.path.isdir(dir):
-        os.makedirs(dir)
+        if dir:
+            os.makedirs(dir)
 
     with open(filename, "wb") as f:
         pickle.dump(data, f, protocol=protocol)

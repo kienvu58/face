@@ -53,7 +53,7 @@ def identity(scores, G, P, ids, ranks):
         if len(P) == 0:
             ret.append(0.0)
         else:
-            ret.append(R_k / len(P))
+            ret.append((float)R_k / len(P))
     return ret
 
 
@@ -121,8 +121,8 @@ def verify(scores, G, P, ids, c_range):
 
         sum_Di = sum(len_Di) + 1
         sum_Fi = sum(len_Fi) + 1
-        P_V.append(1 / sum_Di * sum([a * b for a, b in zip(len_Di, P_Vi)]))
-        P_F.append(1 / sum_Fi * sum([a * b for a, b in zip(len_Fi, P_Fi)]))
+        P_V.append(1.0 / sum_Di * sum([a * b for a, b in zip(len_Di, P_Vi)]))
+        P_F.append(1.0 / sum_Fi * sum([a * b for a, b in zip(len_Fi, P_Fi)]))
 
     return P_V, P_F
 
@@ -145,9 +145,8 @@ def evaluate(scores, gallery, probe, ids):
             "roc": ([P_V], [P_F])
         }
     """
-    normalized_scores = normalize_scores(scores)
-    cms = identity(normalized_scores, gallery, probe, ids, RANKS)
-    P_V, P_F = verify(normalized_scores, gallery, probe, ids, C_RANGE)
+    cms = identity(scores, gallery, probe, ids, RANKS)
+    P_V, P_F = verify(scores, gallery, probe, ids, C_RANGE)
     ret = {
         "cmc": (RANKS, cms),
         "roc": (P_F, P_V)
@@ -157,6 +156,7 @@ def evaluate(scores, gallery, probe, ids):
 
 def evaluate_from_file(scores_file_name):
     scores = load(scores_file_name)
+    scores = normalize_scores(scores)
     gallery = load(GALLERY)
     probe_fafb = load(PROBE_FAFB)
     probe_dup1 = load(PROBE_DUP1)
