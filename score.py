@@ -15,6 +15,11 @@ if (sys.version_info > (3, 0)):
 else:
     import importlib
 
+g_target_reps = None
+g_query_reps = None
+g_scores = None
+g_algo = None
+
 
 def get_affine_transform(scale_factor, left_eye, right_eye, mouth):
     original = np.float32([left_eye, right_eye, mouth])
@@ -74,40 +79,50 @@ def align_feret(img, subject, img_file_name):
     return aligned_img
 
 
-def multi_args(args):
-    calc_scores_worker(*args)
+def calc_scores_worker(q_id):
+    global g_algo
+    global g_query_reps
+    global g_target_reps
+    global g_scores
+    q_rep = g_query_reps[q_id]
+    for t_id, t_rep in enumerate(g_target_reps):
+        score = g_algo.calc_sim(q_rep, t_rep)
+        g_scores[q_id][t_id] = score
 
 
-def calc_scores_worker(module_name, params, q_id, scores, target, query, align):
-    module = importlib.import_module(module_name)
-    algo = module.create(params)
-    q = query[q_id]
-    q_img_path = os.path.join(FERET_DIR, *q)
-    for t_id, t in enumerate(target):
-        t_img_path = os.path.join(FERET_DIR, *t)
-        target_img = cv2.imread(t_img_path, cv2.IMREAD_GRAYSCALE)
-        query_img = cv2.imread(q_img_path, cv2.IMREAD_GRAYSCALE)
+def calc_scores():
+    global g_algo
+    global g_query_reps
+    global g_target_reps
+    global g_scores
+    g_scores = np.empty((len(g_query_reps), len(g_target_reps)))
+    q_ids = list(range(len(g_query_reps)))
+    # pool = Pool()
+    # pool.map(calc_scores_worker, q_ids)
+    for q_id in q_ids:
+        calc_scores_worker(q_id)
+
+
+def load_images(list_path, align):
+    images = []
+    for subj, fn in list_path:
+        img_path = os.path.join(FERET_DIR, subj, fn)
+        img = cv2.imread(img_path)
 
         if align:
-            target_img = align_feret(target_img, *t)
-            query_img = align_feret(query_img, *q)
+            img = align_feret(img, *t)
 
-        score = algo.calc_sim(target_img, query_img)
+        images.append(img)
 
-        scores[q_id][t_id] = score
-
-
-def calc_scores(module_name, params, target, query, align=False):
-    scores = np.empty((len(query), len(target)))
-    args = []
-    for q_id in range(len(query)):
-        args.append((module_name, params, q_id, scores, target, query, align))
-    pool = Pool()
-    pool.map(multi_args, args)
-    return scores
+    return images
 
 
 def main(args):
+    global g_algo
+    global g_query_reps
+    global g_target_reps
+    global g_scores
+
     module_name = args["module"]
     module = importlib.import_module(module_name)
     params = args["params"]
@@ -118,6 +133,8 @@ def main(args):
         print("Cannot load module: {}".format(module_name))
         exit()
 
+    g_algo = module.create(params)
+
     if args["output"] is not None:
         output = args["output"]
     else:
@@ -127,8 +144,14 @@ def main(args):
     target = load(TARGET_SET)
     query = load(QUERY_SET)
 
-    scores = calc_scores(module_name, params, target, query, align=align)
-    dump(output, scores)
+    target_imgs = load_images(target, align)
+    query_imgs = load_images(query, align)
+
+    g_target_reps = g_algo.calc_reps(target_imgs)
+    g_query_reps = g_algo.calc_reps(query_imgs)
+
+    calc_scores()
+    dump(output, g_scores)
     return output
 
 

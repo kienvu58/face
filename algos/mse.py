@@ -6,8 +6,11 @@ class MSE():
     def __init__(self, params=None):
         print("Init MSE")
 
-    def calc_sim(self, img1, img2):
-        ret = compare_mse(img1, img2)
+    def calc_reps(self, images):
+        return images
+
+    def calc_sim(self, rep1, rep2):
+        ret = compare_mse(rep1, rep2)
         return ret
 
 

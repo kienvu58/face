@@ -15,10 +15,16 @@ class MSEPCA():
         self.pca = PCA(n_components=n_components, svd_solver='randomized',
                        whiten=True).fit(x_train)
 
-    def calc_sim(self, img1, img2):
-        img1_pca = self.pca.transform(img1.reshape(1, -1))
-        img2_pca = self.pca.transform(img2.reshape(1, -1))
-        ret = compare_mse(img1_pca, img2_pca)
+    def calc_reps(self, images):
+        reps = []
+        for img in images:
+            rep = self.pca.transform(img.reshape(1, -1))
+            reps.append(rep)
+
+        return reps
+
+    def calc_sim(self, rep1, rep2):
+        ret = compare_mse(rep1, rep2)
         return ret
 
 

@@ -6,7 +6,10 @@ class ExampleAlgo:
         print("Init ExampleAlgo")
         print(params)
 
-    def calc_sim(self, img1, img2):
+    def calc_reps(self, images):
+        return images
+
+    def calc_sim(self, rep1, rep2):
         ret = random.random()
         return ret
 

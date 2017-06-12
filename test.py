@@ -14,18 +14,30 @@ from score import *
 from utils import *
 
 
-def main():
-    scores = load("evals/aligned_mse.dat")
-    print(scores)
+def modify(scores):
+    scores[0][0] = 1
+
 
 # def main():
-#     subject = "00001"
-#     img_fn = "00001_930831_fa_a.ppm"
-#     face_info = get_face_info(subject, img_fn)
-#     print(face_info)
-#     img_path = os.path.join(FERET_DIR, "00001/00001_930831_fa_a.ppm")
-#     img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-#     align_feret(img, subject, img_fn)
+#     scores = load("scores/algos_example.dat")
+#     print(scores[0])
+#     print(scores)
+#     # scores = np.empty((3, 3))
+#     # print(scores)
+#     # modify(scores)
+#     # print(scores)
+
+
+def main():
+    subject = "00001"
+    img_fn = "00001_930831_fa_a.ppm"
+    face_info = get_face_info(subject, img_fn)
+    print(face_info)
+    img_path = os.path.join(FERET_DIR, "00001/00001_930831_fa_a.ppm")
+    img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+    print(img.shape)
+    print(img.dtype)
+    # align_feret(img, subject, img_fn)
 
     # path = os.path.join(GROUND_TRUTH, "00001/00001_930831_fa_a.xml")
     # tree = ET.parse(path)

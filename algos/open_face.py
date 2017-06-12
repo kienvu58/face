@@ -12,7 +12,8 @@ class OpenFace():
         dlib_model_dir = os.path.join(model_dir, "dlib")
         openface_model_dir = os.path.join(model_dir, "openface")
 
-        dlib_face_predictor = os.path.join(dlib_model_dir, "shape_predictor_68_face_landmarks.dat")
+        dlib_face_predictor = os.path.join(
+            dlib_model_dir, "shape_predictor_68_face_landmarks.dat")
         network_model = os.path.join(openface_model_dir, "nn4.small2.v1.t7")
         self.img_dim = 96
 
@@ -33,14 +34,14 @@ class OpenFace():
 
         rep = self.net.forward(aligned_face)
         return rep
-    
-    def calc_sim(self, img1, img2):
-        try:
-            d = self.get_rep(img1) - self.get_rep(img2)
-            ret = np.dot(d, d)
-        except Exception as e:
-            print("calc_sim", e)
-            return 4.0
+
+    def calc_reps(self, images):
+        reps = images
+        return reps
+
+    def calc_sim(self, rep1, rep2):
+        d = rep1 - rep2
+        ret = np.dot(d, d)
         return ret
 
 
