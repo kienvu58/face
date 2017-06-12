@@ -21,7 +21,7 @@ class OpenFace():
         self.net = openface.TorchNeuralNet(network_model, self.img_dim)
 
     def get_rep(self, img):
-        img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         bb = self.align.getLargestFaceBoundingBox(img)
         if bb is None:
@@ -36,7 +36,10 @@ class OpenFace():
         return rep
 
     def calc_reps(self, images):
-        reps = images
+        reps = []
+        for img in images:
+            rep = self.get_rep(img)
+            reps.append(rep)
         return reps
 
     def calc_sim(self, rep1, rep2):
