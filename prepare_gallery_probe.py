@@ -103,11 +103,13 @@ def main():
     n_dup1 = len(dup1_query)
     probe_dup1 = list(range(n_fafb, n_fafb + n_dup1))
     ids_dup1 = get_true_ids(dup1_query, ids)
+    print(probe_dup1)
 
     dup2_query = process_dup(DUP2, ids)
     n_dup2 = len(dup2_query)
-    probe_dup2 = list(range(n_dup1, n_dup1 + n_dup2))
+    probe_dup2 = list(range(n_fafb + n_dup1, n_fafb + n_dup1 + n_dup2))
     ids_dup2 = get_true_ids(dup2_query, ids)
+    print(probe_dup2)
 
     query.extend(dup1_query)
     query.extend(dup2_query)
