@@ -53,7 +53,7 @@ def identity(scores, G, P, ids, ranks):
         if len(P) == 0:
             ret.append(0.0)
         else:
-            ret.append((float)R_k / len(P))
+            ret.append(float(R_k) / len(P))
     return ret
 
 
