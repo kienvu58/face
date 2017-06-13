@@ -53,7 +53,7 @@ def identity(scores, G, P, ids, ranks):
         if len(P) == 0:
             ret.append(0.0)
         else:
-            ret.append(float(R_k) / len(P))
+            ret.append(float(R_k) / float(len(P)))
     return ret
 
 
@@ -109,20 +109,20 @@ def verify(scores, G, P, ids, c_range):
                 P_Vi.append(0)
                 len_Di.append(0)
             else:
-                P_Vi.append(count(c, D) / len(D))
+                P_Vi.append(float(count(c, D)) / float(len(D)))
                 len_Di.append(len(D))
 
             if len(F) == 0:
                 P_Fi.append(0)
                 len_Fi.append(0)
             else:
-                P_Fi.append(count(c, F) / len(F))
+                P_Fi.append(float(count(c, F)) / float(len(F)))
                 len_Fi.append(len(F))
 
         sum_Di = sum(len_Di) + 1
         sum_Fi = sum(len_Fi) + 1
-        P_V.append(1.0 / sum_Di * sum([a * b for a, b in zip(len_Di, P_Vi)]))
-        P_F.append(1.0 / sum_Fi * sum([a * b for a, b in zip(len_Fi, P_Fi)]))
+        P_V.append(1.0 / float(sum_Di * sum([a * b for a, b in zip(len_Di, P_Vi)])))
+        P_F.append(1.0 / float(sum_Fi * sum([a * b for a, b in zip(len_Fi, P_Fi)])))
 
     return P_V, P_F
 
@@ -133,7 +133,7 @@ def normalize_scores(scores):
     """
     min_score = scores.min()
     max_score = scores.max()
-    scale_scores = (scores - min_score) / (max_score - min_score)
+    scale_scores = float(scores - min_score) / float(max_score - min_score)
     return scale_scores
 
 

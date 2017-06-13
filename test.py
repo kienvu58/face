@@ -19,10 +19,8 @@ def modify(scores):
 
 
 def main():
-    scores = load("scores/open_face_default_1.dat")
-    print(scores.shape)
-    dup2_scores = scores[]
-    print(dup2_scores.shape)
+    scores = load("evals/open_face_default.dat")
+    print(scores)
     # scores = np.empty((3, 3))
     # print(scores)
     # modify(scores)
