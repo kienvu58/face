@@ -3,13 +3,27 @@ import os
 import argparse
 from utils import *
 from config import *
+import itertools
+
+MARKERS = (".", "+", "x", "D", "s", "v")
+LINESTYLES = ("-", "--", "-.", ":")
 
 
 def plot_from_dict(plot_dict, title, xlabel, ylabel, xticks=None, save=False):
     plt.figure()
+    markers = itertools.cycle(MARKERS)
+    linestyles = itertools.cycle(LINESTYLES)
+    marker = next(markers)
+    linestyle = next(linestyles)
     for label in plot_dict.keys():
         data = plot_dict[label]
-        plt.plot(data[0], data[1], label=label)
+        plt.plot(data[0], data[1], label=label,
+                 marker=marker, linestyle=linestyle, markersize=5, linewidth=1)
+
+        linestyle = next(linestyles)
+        marker = next(markers)
+        if linestyle == LINESTYLES[0]:
+            marker = next(markers)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)

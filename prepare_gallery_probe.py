@@ -3,6 +3,7 @@ import os
 from random import randint
 from utils import *
 from config import *
+from score import get_face_info
 
 
 PARTITIONS = "partitions"
@@ -37,6 +38,13 @@ DUP2 = "dup2.txt"
 # probe dup2: 228 images in dup2
 
 
+def have_ground_truth(subject, path):
+    info = get_face_info(subject, path)
+    if info is not None:
+        return True
+    return False
+
+
 def process_fa_fb():
     fa_file = os.path.join(PARTITIONS, FA)
     fb_file = os.path.join(PARTITIONS, FB)
@@ -45,12 +53,14 @@ def process_fa_fb():
     with open(fa_file, "r") as fa:
         for line in fa:
             subject, path = line.split()
-            fa_dict[subject] = path
+            if have_ground_truth(subject, path):
+                fa_dict[subject] = path
 
     with open(fb_file, "r") as fb:
         for line in fb:
             subject, path = line.split()
-            fb_dict[subject] = path
+            if have_ground_truth(subject, path):
+                fb_dict[subject] = path
 
     target = []
     query = []
@@ -71,20 +81,25 @@ def process_fa_fb():
     return target, query, ids
 
 
+def have_target(subject, ids):
+    return subject in ids.keys()
+
+
 def process_dup(dup, ids):
     dup_file = os.path.join(PARTITIONS, dup)
     dup_query = []
     with open(dup_file, "r") as fb:
         for line in fb:
             subject, path = line.split()[:2]
-            dup_query.append((subject, path))
+            if have_ground_truth(subject, path) and have_target(subject, ids):
+                dup_query.append((subject, path))
 
     return dup_query
 
 
-def get_true_ids(query, ids):
+def get_true_ids(queries, ids):
     true_ids = []
-    for q in query:
+    for q in queries:
         true_ids.append(ids[q[0]])
     return true_ids
 
