@@ -5,8 +5,10 @@ from utils import *
 from config import *
 import itertools
 
-MARKERS = (".", "+", "x", "D", "s", "v")
-LINESTYLES = ("-", "--", "-.", ":")
+MARKERS = ","
+LINESTYLES = "-"
+# MARKERS = (".", "+", "x", "D", "s", "v")
+# LINESTYLES = ("-", "--", "-.", ":")
 
 
 def plot_from_dict(plot_dict, title, xlabel, ylabel, xticks=None, save=False):

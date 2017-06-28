@@ -121,8 +121,16 @@ def verify(scores, G, P, ids, c_range):
 
         sum_Di = sum(len_Di) + 1
         sum_Fi = sum(len_Fi) + 1
-        P_V.append(1.0 / float(sum_Di * sum([a * b for a, b in zip(len_Di, P_Vi)])))
-        P_F.append(1.0 / float(sum_Fi * sum([a * b for a, b in zip(len_Fi, P_Fi)])))
+        dpv = float(sum_Di * sum([a * b for a, b in zip(len_Di, P_Vi)]))
+        if dpv == 0:
+            print(len_Di, P_Vi)
+            dpv = 1
+        P_V.append(1.0 / dpv)
+
+        dpf = float(sum_Fi * sum([a * b for a, b in zip(len_Fi, P_Fi)]))
+        if dpf == 0:
+            dpf = 1
+        P_F.append(1.0 / dpf)
 
     return P_V, P_F
 

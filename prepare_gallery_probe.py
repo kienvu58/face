@@ -39,10 +39,16 @@ DUP2 = "dup2.txt"
 
 
 def have_ground_truth(subject, path):
+    return True
     info = get_face_info(subject, path)
     if info is not None:
         return True
     return False
+
+
+def have_target(subject, ids):
+    return True
+    return subject in ids.keys()
 
 
 def process_fa_fb():
@@ -79,10 +85,6 @@ def process_fa_fb():
         ids[key] = len(target) - 1
 
     return target, query, ids
-
-
-def have_target(subject, ids):
-    return subject in ids.keys()
 
 
 def process_dup(dup, ids):

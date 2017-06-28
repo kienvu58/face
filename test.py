@@ -19,10 +19,14 @@ def modify(scores):
 
 
 def main():
-    
-    scores = load("scores/open_face_default.dat")
+    # idfafb = load(IDS_DUP2)
+    # probe =load(IDS_DUP2)
+    # print(len(idfafb))
+    # print(len(probe))
+    scores = load("evals/facenet.dat")
     print(scores)
-    print(scores.shape)
+    # print(normalize_scores(scores))
+    # print(scores.shape)
     # scores = np.empty((3, 3))
     # print(scores)
     # modify(scores)
