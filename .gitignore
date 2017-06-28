@@ -2,6 +2,7 @@
 *.err
 *.out
 *.bsub
+algos/20170512-110547/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

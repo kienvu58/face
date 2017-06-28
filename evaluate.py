@@ -133,7 +133,7 @@ def normalize_scores(scores):
     """
     min_score = scores.min()
     max_score = scores.max()
-    scale_scores = float(scores - min_score) / float(max_score - min_score)
+    scale_scores = (scores - min_score) / float(max_score - min_score)
     return scale_scores
 
 

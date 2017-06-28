@@ -4,6 +4,7 @@ from algos import align_dlib
 import cv2
 import numpy as np
 from algos import facenet
+import tensorflow as tf
 
 
 class FacenetAlgo():
@@ -24,7 +25,7 @@ class FacenetAlgo():
                                             landmarkIndices=align_dlib.AlignDlib.OUTER_EYES_AND_NOSE)
             if aligned_face is None:
                 raise Exception("Unable to align image!")
-            align_faces.append(align_face)
+            align_faces.append(aligned_face)
 
         model = "algos/20170512-110547"
         images = facenet.prewhiten(np.array(align_faces))
@@ -34,7 +35,6 @@ class FacenetAlgo():
 
                 # Load the model
                 facenet.load_model(model)
-                print(time.time() - start)
 
                 # Get input and output tensors
                 images_placeholder = tf.get_default_graph().get_tensor_by_name("input:0")
@@ -45,7 +45,7 @@ class FacenetAlgo():
                 feed_dict = {images_placeholder: images,
                              phase_train_placeholder: False}
                 emb = sess.run(embeddings, feed_dict=feed_dict)
-        return emb
+        return list(emb)
 
     def calc_sim(self, rep1, rep2):
         dist = np.sqrt(np.sum(np.square(np.subtract(rep1, rep2))))

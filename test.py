@@ -19,19 +19,10 @@ def modify(scores):
 
 
 def main():
-    target = load(TARGET_SET)
-    n_ok = 0
-    for subj, path in target:
-        info = get_face_info(subj, path)
-        if info is not None:
-            n_ok += 1
-        else:
-            print(subj, path)
-
-    print(n_ok, len(target))
     
-    # scores = load("evals/open_face_default.dat")
-    # print(scores)
+    scores = load("scores/open_face_default.dat")
+    print(scores)
+    print(scores.shape)
     # scores = np.empty((3, 3))
     # print(scores)
     # modify(scores)
